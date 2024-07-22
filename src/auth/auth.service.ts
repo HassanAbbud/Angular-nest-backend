@@ -92,7 +92,7 @@ export class AuthService {
     return rest;
   }
 
-  getJwtToken(payload: JwtPayload){
+  getJwtToken( payload: JwtPayload ) {
     const token = this.jwtService.sign(payload);
     return token;
   }
