@@ -9,6 +9,8 @@ import * as bcryptjs from 'bcryptjs';
 import { LogInDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload';
+import { LogInResponse } from './interfaces/login-response';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -42,9 +44,21 @@ export class AuthService {
       }
       throw new InternalServerErrorException('Something terribe happen!!!');
     }
-    // Encrypt password
-    // Save user
-    // Generate JWT
+  }
+  
+  async register(registerDto: RegisterDto): Promise<LogInResponse>{
+    const { password, passwordConfirmation } = registerDto;
+    
+    if (password != passwordConfirmation) {
+      throw new UnauthorizedException ("Passwords do not match")
+    }
+    //Create the new user
+    const user = await this.create(registerDto);
+    
+    return {
+      user: user,
+      token: this.getJwtPayload({id: user._id})
+    };
   }
 
   async login( loginDto: LogInDto){
@@ -68,8 +82,8 @@ export class AuthService {
     }
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  findAll():Promise<User[]> {
+    return this.userModel.find();
   }
 
   findOne(id: number) {
