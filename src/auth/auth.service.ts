@@ -75,7 +75,7 @@ export class AuthService {
       throw new UnauthorizedException("Invalid credentials - password")
     };
 
-    const {password:_, ...userInfo } = user
+    const {password:_, ...userInfo } = user.toJSON();
     return{
       user: userInfo,
       token: this.getJwtToken({id: user._id}),
