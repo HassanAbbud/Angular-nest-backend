@@ -57,7 +57,7 @@ export class AuthService {
     
     return {
       user: user,
-      token: this.getJwtPayload({id: user._id})
+      token: this.getJwtToken({id: user._id})
     };
   }
 
@@ -78,7 +78,7 @@ export class AuthService {
     const {password:_, ...userInfo } = user
     return{
       user: userInfo,
-      token: this.getJwtPayload({id: user._id}),
+      token: this.getJwtToken({id: user._id}),
     }
   }
 
@@ -90,6 +90,11 @@ export class AuthService {
     const user = await this.userModel.findById(id);
     const {password, ...rest} = user.toJSON();
     return rest;
+  }
+
+  getJwtToken(payload: JwtPayload){
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 
   findOne(id: number) {
@@ -104,8 +109,4 @@ export class AuthService {
     return `This action removes a #${id} auth`;
   }
 
-  getJwtPayload(payload: JwtPayload){
-    const token = this.jwtService.sign(payload);
-    return token;
-  }
 }
